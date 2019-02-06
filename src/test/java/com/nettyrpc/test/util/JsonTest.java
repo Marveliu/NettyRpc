@@ -14,7 +14,7 @@ import java.util.UUID;
  * Created by jsc on 2016-03-10.
  */
 public class JsonTest {
-    public static void main(String[] args){
+    public static void main(String[] args) {
         RpcResponse response = new RpcResponse();
         response.setRequestId(UUID.randomUUID().toString());
         response.setError("Error msg");
@@ -26,16 +26,16 @@ public class JsonTest {
         byte[] datas2 = SerializationUtil.serialize(response);
         System.out.println("Protobuf byte length: " + datas2.length);
 
-        RpcResponse resp = (RpcResponse)JsonUtil.deserialize(datas,RpcResponse.class);
+        RpcResponse resp = (RpcResponse) JsonUtil.deserialize(datas, RpcResponse.class);
         System.out.println(resp.getRequestId());
     }
 
 
-    private static void TestJsonSerialize(){
+    private static void TestJsonSerialize() {
         RpcRequest request = new RpcRequest();
         request.setClassName(HelloServiceImpl.class.getName());
         request.setMethodName(HelloServiceImpl.class.getDeclaredMethods()[0].getName());
-        Person person = new Person("lu","xiaoxun");
+        Person person = new Person("lu", "xiaoxun");
         request.setParameters(new Object[]{person});
         request.setRequestId(UUID.randomUUID().toString());
         System.out.println(request.getRequestId());
@@ -46,7 +46,7 @@ public class JsonTest {
         byte[] datas2 = SerializationUtil.serialize(request);
         System.out.println("Protobuf byte length: " + datas2.length);
 
-        RpcRequest req = (RpcRequest)JsonUtil.deserialize(datas,RpcRequest.class);
+        RpcRequest req = (RpcRequest) JsonUtil.deserialize(datas, RpcRequest.class);
         System.out.println(req.getRequestId());
     }
 

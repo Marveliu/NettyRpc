@@ -18,8 +18,7 @@ public class RpcClient {
 
     private String serverAddress;
     private ServiceDiscovery serviceDiscovery;
-    private static ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(16, 16,
-            600L, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(65536));
+    private static ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(16, 16, 600L, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(65536));
 
     public RpcClient(String serverAddress) {
         this.serverAddress = serverAddress;
@@ -29,6 +28,13 @@ public class RpcClient {
         this.serviceDiscovery = serviceDiscovery;
     }
 
+    /**
+     * 代理RPC调用服务
+     *
+     * @param interfaceClass
+     * @param <T>
+     * @return
+     */
     @SuppressWarnings("unchecked")
     public static <T> T create(Class<T> interfaceClass) {
         return (T) Proxy.newProxyInstance(

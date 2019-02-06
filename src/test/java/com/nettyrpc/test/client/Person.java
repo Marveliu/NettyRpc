@@ -30,19 +30,19 @@ public class Person {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return firstName + " " + lastName;
     }
 
     @Override
     public int hashCode() {
-        return this.firstName.hashCode()^this.lastName.hashCode();
+        return this.firstName.hashCode() ^ this.lastName.hashCode();
     }
 
     @Override
     public boolean equals(Object obj) {
-        if(!(obj instanceof Person) ) return false;
-        Person p = (Person)obj;
+        if (!(obj instanceof Person)) return false;
+        Person p = (Person) obj;
         return this.firstName.equals(p.firstName) && this.lastName.equals(p.lastName);
     }
 }

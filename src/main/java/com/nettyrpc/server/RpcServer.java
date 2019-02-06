@@ -84,14 +84,20 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
         if (threadPoolExecutor == null) {
             synchronized (RpcServer.class) {
                 if (threadPoolExecutor == null) {
-                    threadPoolExecutor = new ThreadPoolExecutor(16, 16, 600L,
-                            TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(65536));
+                    threadPoolExecutor = new ThreadPoolExecutor(16, 16, 600L, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(65536));
                 }
             }
         }
         threadPoolExecutor.submit(task);
     }
 
+    /**
+     * 添加RPC服务
+     *
+     * @param interfaceName
+     * @param serviceBean
+     * @return
+     */
     public RpcServer addService(String interfaceName, Object serviceBean) {
         if (!handlerMap.containsKey(interfaceName)) {
             logger.info("Loading service: {}", interfaceName);
@@ -101,6 +107,11 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
         return this;
     }
 
+    /**
+     * 启动netty服务端
+     *
+     * @throws Exception
+     */
     public void start() throws Exception {
         if (bossGroup == null && workerGroup == null) {
             bossGroup = new NioEventLoopGroup();
@@ -128,6 +139,7 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
             logger.info("Server started on port {}", port);
 
             if (serviceRegistry != null) {
+                // 服务注册中心注册
                 serviceRegistry.register(serverAddress);
             }
 

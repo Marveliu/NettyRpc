@@ -15,8 +15,12 @@ import java.util.concurrent.CountDownLatch;
  * Created by luxiaoxun on 2016-03-14.
  */
 public class RpcClientHandler extends SimpleChannelInboundHandler<RpcResponse> {
+
     private static final Logger logger = LoggerFactory.getLogger(RpcClientHandler.class);
 
+    /**
+     * key:RequestId value:Futrure
+     */
     private ConcurrentHashMap<String, RPCFuture> pendingRPC = new ConcurrentHashMap<>();
 
     private volatile Channel channel;
@@ -77,7 +81,6 @@ public class RpcClientHandler extends SimpleChannelInboundHandler<RpcResponse> {
         } catch (InterruptedException e) {
             logger.error(e.getMessage());
         }
-
         return rpcFuture;
     }
 }

@@ -24,12 +24,13 @@ import java.util.concurrent.locks.ReentrantLock;
  * Created by luxiaoxun on 2016-03-16.
  */
 public class ConnectManage {
+
     private static final Logger logger = LoggerFactory.getLogger(ConnectManage.class);
+
     private volatile static ConnectManage connectManage;
 
     private EventLoopGroup eventLoopGroup = new NioEventLoopGroup(4);
-    private static ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(16, 16,
-            600L, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(65536));
+    private static ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(16, 16, 600L, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(65536));
 
     private CopyOnWriteArrayList<RpcClientHandler> connectedHandlers = new CopyOnWriteArrayList<>();
     private Map<InetSocketAddress, RpcClientHandler> connectedServerNodes = new ConcurrentHashMap<>();
@@ -43,6 +44,11 @@ public class ConnectManage {
     private ConnectManage() {
     }
 
+    /**
+     * 单例
+     *
+     * @return
+     */
     public static ConnectManage getInstance() {
         if (connectManage == null) {
             synchronized (ConnectManage.class) {
@@ -54,14 +60,21 @@ public class ConnectManage {
         return connectManage;
     }
 
+    /**
+     * 更新服务发现节点
+     *
+     * @param allServerAddress
+     */
     public void updateConnectedServer(List<String> allServerAddress) {
         if (allServerAddress != null) {
-            if (allServerAddress.size() > 0) {  // Get available server node
-                //update local serverNodes cache
+            if (allServerAddress.size() > 0) {
+                // Get available server node
+                // update local serverNodes cache
                 HashSet<InetSocketAddress> newAllServerNodeSet = new HashSet<InetSocketAddress>();
                 for (int i = 0; i < allServerAddress.size(); ++i) {
                     String[] array = allServerAddress.get(i).split(":");
-                    if (array.length == 2) { // Should check IP and port
+                    if (array.length == 2) {
+                        // Should check IP and port
                         String host = array[0];
                         int port = Integer.parseInt(array[1]);
                         final InetSocketAddress remotePeer = new InetSocketAddress(host, port);
@@ -91,7 +104,8 @@ public class ConnectManage {
                     }
                 }
 
-            } else { // No available server node ( All server nodes are down )
+            } else {
+                // No available server node ( All server nodes are down )
                 logger.error("No available server node. All server nodes are down !!!");
                 for (final RpcClientHandler connectedServerHandler : connectedHandlers) {
                     SocketAddress remotePeer = connectedServerHandler.getRemotePeer();
@@ -104,6 +118,12 @@ public class ConnectManage {
         }
     }
 
+    /**
+     * 重连
+     *
+     * @param handler
+     * @param remotePeer
+     */
     public void reconnect(final RpcClientHandler handler, final SocketAddress remotePeer) {
         if (handler != null) {
             connectedHandlers.remove(handler);
@@ -112,6 +132,11 @@ public class ConnectManage {
         connectServerNode((InetSocketAddress) remotePeer);
     }
 
+    /**
+     * 连接远程服务
+     *
+     * @param remotePeer
+     */
     private void connectServerNode(final InetSocketAddress remotePeer) {
         threadPoolExecutor.submit(new Runnable() {
             @Override
@@ -161,6 +186,11 @@ public class ConnectManage {
         }
     }
 
+    /**
+     * 选择一个服务发送
+     *
+     * @return
+     */
     public RpcClientHandler chooseHandler() {
         int size = connectedHandlers.size();
         while (isRuning && size <= 0) {
@@ -174,6 +204,7 @@ public class ConnectManage {
                 throw new RuntimeException("Can't connect any servers!", e);
             }
         }
+        // roundRobin随机
         int index = (roundRobin.getAndAdd(1) + size) % size;
         return connectedHandlers.get(index);
     }

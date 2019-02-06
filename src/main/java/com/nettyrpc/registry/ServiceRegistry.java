@@ -2,6 +2,7 @@ package com.nettyrpc.registry;
 
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
+
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
@@ -34,7 +35,8 @@ public class ServiceRegistry {
         if (data != null) {
             ZooKeeper zk = connectServer();
             if (zk != null) {
-                AddRootNode(zk); // Add root node if not exist
+                // Add root node if not exist
+                AddRootNode(zk);
                 createNode(zk, data);
             }
         }
@@ -54,14 +56,18 @@ public class ServiceRegistry {
             latch.await();
         } catch (IOException e) {
             logger.error("", e);
-        }
-        catch (InterruptedException ex){
+        } catch (InterruptedException ex) {
             logger.error("", ex);
         }
         return zk;
     }
 
-    private void AddRootNode(ZooKeeper zk){
+    /**
+     * 添加根ZNODE
+     *
+     * @param zk
+     */
+    private void AddRootNode(ZooKeeper zk) {
         try {
             Stat s = zk.exists(Constant.ZK_REGISTRY_PATH, false);
             if (s == null) {
@@ -74,6 +80,12 @@ public class ServiceRegistry {
         }
     }
 
+    /**
+     * 添加瞬时子ZNODE
+     *
+     * @param zk
+     * @param data
+     */
     private void createNode(ZooKeeper zk, String data) {
         try {
             byte[] bytes = data.getBytes();
@@ -81,8 +93,7 @@ public class ServiceRegistry {
             logger.debug("create zookeeper node ({} => {})", path, data);
         } catch (KeeperException e) {
             logger.error("", e);
-        }
-        catch (InterruptedException ex){
+        } catch (InterruptedException ex) {
             logger.error("", ex);
         }
     }

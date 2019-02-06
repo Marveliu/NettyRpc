@@ -10,6 +10,7 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 
 /**
+ * RPC 客户端初始化工具
  * Created by luxiaoxun on 2016-03-16.
  */
 public class RpcClientInitializer extends ChannelInitializer<SocketChannel> {

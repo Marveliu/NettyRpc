@@ -2,9 +2,11 @@ package com.nettyrpc.protocol;
 
 /**
  * RPC Request
+ *
  * @author huangyong
  */
 public class RpcRequest {
+
     private String requestId;
     private String className;
     private String methodName;

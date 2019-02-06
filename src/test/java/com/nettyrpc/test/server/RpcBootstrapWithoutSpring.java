@@ -10,7 +10,7 @@ public class RpcBootstrapWithoutSpring {
     private static final Logger logger = LoggerFactory.getLogger(RpcBootstrapWithoutSpring.class);
 
     public static void main(String[] args) {
-        String serverAddress = "127.0.0.1:18866";
+        String serverAddress = "127.0.0.1:18867";
         ServiceRegistry serviceRegistry = new ServiceRegistry("127.0.0.1:2181");
         RpcServer rpcServer = new RpcServer(serverAddress, serviceRegistry);
         HelloService helloService = new HelloServiceImpl();

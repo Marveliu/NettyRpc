@@ -54,6 +54,11 @@ public class ServiceDiscovery {
         return data;
     }
 
+    /**
+     * 连接zookeeper
+     *
+     * @return
+     */
     private ZooKeeper connectServer() {
         ZooKeeper zk = null;
         try {
@@ -61,6 +66,7 @@ public class ServiceDiscovery {
                 @Override
                 public void process(WatchedEvent event) {
                     if (event.getState() == Event.KeeperState.SyncConnected) {
+                        // 阻塞
                         latch.countDown();
                     }
                 }
@@ -72,11 +78,17 @@ public class ServiceDiscovery {
         return zk;
     }
 
+    /**
+     * 监听节点
+     *
+     * @param zk
+     */
     private void watchNode(final ZooKeeper zk) {
         try {
             List<String> nodeList = zk.getChildren(Constant.ZK_REGISTRY_PATH, new Watcher() {
                 @Override
                 public void process(WatchedEvent event) {
+                    // 继续监听znode节点变化，保证不断的监听
                     if (event.getType() == Event.EventType.NodeChildrenChanged) {
                         watchNode(zk);
                     }
@@ -84,6 +96,7 @@ public class ServiceDiscovery {
             });
             List<String> dataList = new ArrayList<>();
             for (String node : nodeList) {
+                // 获得znode信息
                 byte[] bytes = zk.getData(Constant.ZK_REGISTRY_PATH + "/" + node, false, null);
                 dataList.add(new String(bytes));
             }
@@ -97,12 +110,15 @@ public class ServiceDiscovery {
         }
     }
 
-    private void UpdateConnectedServer(){
+    /**
+     * 更新服务信息
+     */
+    private void UpdateConnectedServer() {
         ConnectManage.getInstance().updateConnectedServer(this.dataList);
     }
 
-    public void stop(){
-        if(zookeeper!=null){
+    public void stop() {
+        if (zookeeper != null) {
             try {
                 zookeeper.close();
             } catch (InterruptedException e) {

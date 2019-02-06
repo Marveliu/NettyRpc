@@ -11,7 +11,7 @@ public class Benchmark {
 
     public static void main(String[] args) throws InterruptedException {
 
-        ServiceDiscovery serviceDiscovery = new ServiceDiscovery("10.245.247.105:2181");
+        ServiceDiscovery serviceDiscovery = new ServiceDiscovery("127.0.0.1:2181");
         final RpcClient rpcClient = new RpcClient(serviceDiscovery);
 
         int threadNum = 10;
@@ -19,7 +19,7 @@ public class Benchmark {
         Thread[] threads = new Thread[threadNum];
 
         long startTime = System.currentTimeMillis();
-        //benchmark for sync call
+        // benchmark for sync call
         for (int i = 0; i < threadNum; ++i) {
             threads[i] = new Thread(new Runnable() {
                 @Override

@@ -54,14 +54,21 @@ public class RpcHandler extends SimpleChannelInboundHandler<RpcRequest> {
         });
     }
 
+    /**
+     * 解析RPC服务，反射进行调用
+     *
+     * @param request
+     * @return
+     * @throws Throwable
+     */
     private Object handle(RpcRequest request) throws Throwable {
-        String className   = request.getClassName();
+        String className = request.getClassName();
         Object serviceBean = handlerMap.get(className);
 
-        Class<?>   serviceClass   = serviceBean.getClass();
-        String     methodName     = request.getMethodName();
+        Class<?> serviceClass = serviceBean.getClass();
+        String methodName = request.getMethodName();
         Class<?>[] parameterTypes = request.getParameterTypes();
-        Object[]   parameters     = request.getParameters();
+        Object[] parameters = request.getParameters();
 
         logger.debug(serviceClass.getName());
         logger.debug(methodName);
@@ -73,14 +80,15 @@ public class RpcHandler extends SimpleChannelInboundHandler<RpcRequest> {
         }
 
         // JDK reflect
-        /*Method method = serviceClass.getMethod(methodName, parameterTypes);
-        method.setAccessible(true);
-        return method.invoke(serviceBean, parameters);*/
+        // Method method = serviceClass.getMethod(methodName, parameterTypes);
+        // method.setAccessible(true);
+        // return method.invoke(serviceBean, parameters);
 
         // Cglib reflect
         FastClass serviceFastClass = FastClass.create(serviceClass);
-//        FastMethod serviceFastMethod = serviceFastClass.getMethod(methodName, parameterTypes);
-//        return serviceFastMethod.invoke(serviceBean, parameters);
+        // FastMethod serviceFastMethod = serviceFastClass.getMethod(methodName, parameterTypes);
+        // return serviceFastMethod.invoke(serviceBean, parameters);
+
         // for higher-performance
         int methodIndex = serviceFastClass.getIndex(methodName, parameterTypes);
         return serviceFastClass.invoke(methodIndex, serviceBean, parameters);

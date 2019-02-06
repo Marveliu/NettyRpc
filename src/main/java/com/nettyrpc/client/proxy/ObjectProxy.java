@@ -12,9 +12,11 @@ import java.lang.reflect.Method;
 import java.util.UUID;
 
 /**
+ * JDK代理
  * Created by luxiaoxun on 2016-03-16.
  */
 public class ObjectProxy<T> implements InvocationHandler, IAsyncObjectProxy {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ObjectProxy.class);
     private Class<T> clazz;
 
@@ -81,15 +83,15 @@ public class ObjectProxy<T> implements InvocationHandler, IAsyncObjectProxy {
             parameterTypes[i] = getClassType(args[i]);
         }
         request.setParameterTypes(parameterTypes);
-//        Method[] methods = clazz.getDeclaredMethods();
-//        for (int i = 0; i < methods.length; ++i) {
-//            // Bug: if there are 2 methods have the same name
-//            if (methods[i].getName().equals(methodName)) {
-//                parameterTypes = methods[i].getParameterTypes();
-//                request.setParameterTypes(parameterTypes); // get parameter types
-//                break;
-//            }
-//        }
+        // Method[] methods = clazz.getDeclaredMethods();
+        // for (int i = 0; i < methods.length; ++i) {
+        //     // Bug: if there are 2 methods have the same name
+        //     if (methods[i].getName().equals(methodName)) {
+        //         parameterTypes = methods[i].getParameterTypes();
+        //         request.setParameterTypes(parameterTypes); // get parameter types
+        //         break;
+        //     }
+        // }
 
         LOGGER.debug(className);
         LOGGER.debug(methodName);

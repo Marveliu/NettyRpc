@@ -7,7 +7,7 @@ import com.nettyrpc.server.RpcService;
 @RpcService(HelloService.class)
 public class HelloServiceImpl implements HelloService {
 
-    public HelloServiceImpl(){
+    public HelloServiceImpl() {
 
     }
 
